@@ -17,7 +17,7 @@ const port = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://justix.vercel.app",
+    origin: process.env.FRONTEND_URL || "https://justixin.vercel.app",
     credentials: true,
   })
 );
