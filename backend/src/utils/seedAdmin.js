@@ -8,18 +8,30 @@ export const seedAdmin = async () => {
   if (!adminEmail || !adminPassword) return;
 
   const existing = await User.findOne({ email: adminEmail });
-  if (existing) return;
-
   const hashed = await bcrypt.hash(adminPassword, 10);
 
-  await User.create({
-    name: "Platform Admin",
-    email: adminEmail,
-    password: hashed,
-    role: "admin",
-    phone: "",
-  });
+  if (!existing) {
+    await User.create({
+      name: "Platform Admin",
+      email: adminEmail,
+      password: hashed,
+      role: "admin",
+      phone: "",
+    });
 
-  // eslint-disable-next-line no-console
-  console.log("Default admin created from env credentials.");
+    // eslint-disable-next-line no-console
+    console.log("Default admin created from env credentials.");
+    return;
+  }
+
+  const matches = await bcrypt.compare(adminPassword, existing.password);
+  if (existing.role !== "admin" || !matches) {
+    existing.role = "admin";
+    existing.password = hashed;
+    if (!existing.name) existing.name = "Platform Admin";
+    await existing.save();
+
+    // eslint-disable-next-line no-console
+    console.log("Default admin credentials refreshed from env.");
+  }
 };
