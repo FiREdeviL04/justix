@@ -51,7 +51,6 @@ check('GitHub remote configured', fs.existsSync('.git/config'));
 
 // Check environment
 console.log('\n⚙️  Environment Check:');
-const pkgJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const hasFrontend = fs.existsSync('frontend/package.json');
 const hasBackend = fs.existsSync('backend/package.json');
 check('Monorepo structure correct', hasFrontend && hasBackend);
