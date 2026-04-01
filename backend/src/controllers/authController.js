@@ -10,11 +10,18 @@ export const register = async (req, res, next) => {
     const { name, email, password, role, phone } = req.body;
 
     if (!name || !email || !password || !role) {
-      return res.status(400).json({ message: "Missing required fields" });
+      const missing = [];
+      if (!name) missing.push("name");
+      if (!email) missing.push("email");
+      if (!password) missing.push("password");
+      if (!role) missing.push("role");
+      return res.status(400).json({ 
+        message: `Missing required fields: ${missing.join(", ")}${!role ? " (role must be 'lawyer' or 'customer')" : ""}` 
+      });
     }
 
     if (!["lawyer", "customer"].includes(role)) {
-      return res.status(400).json({ message: "Invalid role for registration" });
+      return res.status(400).json({ message: "Invalid role for registration. role must be either 'lawyer' or 'customer'" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -53,6 +60,13 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      const missing = [];
+      if (!email) missing.push("email");
+      if (!password) missing.push("password");
+      return res.status(400).json({ message: `Missing required fields: ${missing.join(", ")}` });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
