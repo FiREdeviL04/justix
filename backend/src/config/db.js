@@ -4,7 +4,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 let memoryServer;
 
 export const connectDB = async () => {
-  const mongoUri = process.env.MONGODB_URI;
+  const mongoUri = process.env.MONGODB_URI || process.env.DATABASE_URL;
 
   if (mongoUri) {
     await mongoose.connect(mongoUri);
